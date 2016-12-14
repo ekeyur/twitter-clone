@@ -56,3 +56,26 @@ user.findById(Theuserid)
 }).then(function(tweets){
   console.log(tweets);
 });
+
+
+
+
+// var jess = {
+//   _id : 'jess',
+//   password : 'jess12',
+//   followers : [],
+//   following : ['trista']
+// }
+//
+// var keyur = {
+//   _id : 'keyur',
+//   password : 'keyur12',
+//   followers : ['trista'],
+//   following : []
+// }
+//
+// var ttweet = {
+//   text : 'Good Evening',
+//   timestamp : new Date(),
+//   username : 'trista'
+// }
