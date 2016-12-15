@@ -54,7 +54,7 @@ app.get('/worldtimeline',function(req,res){
 
 app.get('/timeline/:username',function(req,res){
   let tweets = [];
-  user.findById(req.params.username)
+  user.findById(req.params.username).limit(20)
   .then(function(usr){
     return tweet.find({
       username : {
@@ -86,8 +86,8 @@ app.post('/profile/:username',function(req,res){
   twt.timestamp = new Date();
   twt.username = req.params.username;
   twt.save().then(function(){
-    console.log("Post Successful")
-    res.json(twt);
+  console.log("Post Successful")
+  res.json(twt);
   });
 });
 
