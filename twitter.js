@@ -86,7 +86,7 @@ app.post('/profile/:username',function(req,res){
   twt.timestamp = new Date();
   twt.username = req.params.username;
   twt.save().then(function(){
-  console.log("Post Successful")
+  console.log("Post Successful");
   res.json(twt);
   });
 });

@@ -1,9 +1,13 @@
 .tweet {
-  background-color: grey;
-  width: 150px;
+  background-color: orange;
+  width: auto;
   list-style-type: none;
+  color : white;
 }
 .center{
   text-align: center;
 }
-.
+
+ul.tweet{
+  padding: 0px;
+}
