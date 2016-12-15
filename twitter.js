@@ -8,6 +8,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 //initializing the app
 const app = express();
+// bcrypt module
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 
 //assign bluebird to promise
 const Promise = bluebird;
@@ -79,10 +83,9 @@ app.get('/profile/:username',function(req,res){
   });
 });
 
-
 app.post('/profile/:username',function(req,res){
   let twt = new tweet();
-  twt.text = req.body.text;
+  twt.text = req.body.twt;
   twt.timestamp = new Date();
   twt.username = req.params.username;
   twt.save().then(function(){
@@ -91,6 +94,32 @@ app.post('/profile/:username',function(req,res){
   });
 });
 
+app.post('/signup',function(req,res){
+  let usr = new user();
+  bcrypt.hash(req.body.password,saltRounds).then(function(hash){
+    usr.password = hash;
+    console.log("hash"+hash);
+    }).then(function(){
+      usr._id = req.body.username;
+      console.log(usr.password);
+      usr.followers = [];
+      usr.following = [];
+      usr.save().then(function(){
+        console.log("Signup Successful");
+        res.json(usr);
+    });
+  });
+});
+
+app.post('/login',function(req,res){
+  user.findById(req.body.username).then(function(data){
+    bcrypt.compare(req.body.password,data.password)
+    .then(function(){
+      var loggedIn = true;
+      console.log("loggedIn");
+    });
+  });
+});
 // world tweet
 
 
