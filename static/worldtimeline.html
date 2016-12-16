@@ -14,7 +14,8 @@
         <!-- <label for="exampleInputEmail2">Email</label> -->
         <input ng-model="password" type="password" class="form-control" placeholder="password">
       </div>
-        <button ng-click="loginPost()" class="btn btn-primary">login</button>
+        <button ng-hide = "loggedIn" ng-click="loginPost()" class="btn btn-primary">login</button>
+        <button ng-show = "loggedIn" ng-click="logOut()" class="btn btn-danger">logOut</button>
       </div>
   </div>
 
@@ -22,19 +23,18 @@
 
 
 <div class="center">
-  <div class="col-sm-offset-3 col-sm-6 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6 col-xl-offset-3 col-xl-6">
-    <ul class="tweet" ng-repeat="tweet in tweets">
-        <li>
-          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-            <!-- <img src="/img/jess.jpg" alt=""> -->
-          </div>
-          <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-            <span>{{tweet.text}}</span>
-          </div>
-          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-            {{tweet.username}} - {{tweet.timestamp | date : 'MMM, d' }}
-          </div>
-      </li>
-    </ul>
-  </div>
+ <div class="col-sm-offset-4 col-sm-4 col-md-offset-4 col-md-4 col-lg-offset-4 col-lg-4 col-xl-offset-4 col-xl-4">
+   <i class="fa fa-globe"></i>
+   <h2><font color="#1da1f2 "><strong>World Moments</strong></font></h2>
+   <ul class="tweet" ng-repeat="tweet in tweets">
+     <li> <span>{{tweet.text}}</span><br>
+       <div class="userdate" style="text-align: right;">
+         {{tweet.username}} - {{tweet.timestamp | date : 'MMM, d' }}
+         <div class="col-sm-3" style="text-align: left;">
+         <i class="fa fa-heart"></i>
+         </div>
+       </div>
+     </li>
+   </ul>
+ </div>
 </div>

@@ -1,13 +1,8 @@
-var app = angular.module('twitterapp',['ui.router']);
+var app = angular.module('twitterapp',['ui.router','ngCookies']);
 
 app.config(function($stateProvider, $urlRouterProvider){
   $stateProvider
-  // .state({
-  //   name: 'login',
-  //   url: '/login',
-  //   templateUrl: 'login.html',
-  //   controller: 'LoginController'
-  // })
+
   .state({
     name: 'profile',
     url: '/profile/{username}',
@@ -35,8 +30,18 @@ app.config(function($stateProvider, $urlRouterProvider){
   $urlRouterProvider.otherwise('/worldtimeline');
 });
 
-app.factory('twitterfactory', function($http) {
+app.factory('twitterfactory', function($http,$cookies,$rootScope) {
   var service = {};
+  $rootScope.loggedIn = false;
+  var logindata = $cookies.getObject('user_cookie');
+  if(logindata){
+  service.auth_token = logindata.auth_token.token;
+  }
+    $rootScope.logOut = function(){
+    $rootScope.loggedIn = false;
+    service.auth_token = null;
+    $cookies.remove('user_cookie');
+};
 
   service.worldtimeline = function(){
     return $http({
@@ -70,6 +75,10 @@ app.factory('twitterfactory', function($http) {
       url : url,
       method : 'POST',
       data : data
+    }).success(function(data){
+      $rootScope.loggedIn = true;
+      service.auth_token = data.auth_token;
+      $cookies.putObject('logindata',data);
     });
   };
 
@@ -116,23 +125,20 @@ app.controller('MyTimelineController',function($scope,$stateParams,twitterfactor
   });
 });
 
-app.controller('WorldTimeLineController',function($scope,twitterfactory) {
+app.controller('WorldTimeLineController',function($scope,twitterfactory,$state) {
   twitterfactory.worldtimeline().success(function(tweets){
     $scope.tweets = tweets;
   });
   $scope.loginPost = function(){
-    console.log($scope.usr);
-    console.log($scope.password);
     user = {username : $scope.usr, password : $scope.password};
     twitterfactory.logIn(user).success(function(data){
+      $state.go('profile',{username : $scope.usr});
     });
   };
 });
 
 app.controller('ProfileController',function($scope,$stateParams,twitterfactory){
   twitterfactory.profiles($stateParams.username).success(function(data){
-    $scope.followingl = data.usr.following.length;
-    $scope.followersl = data.usr.followers.length;
     $scope.profile = data;
   });
   $scope.posttwt = function()
@@ -140,8 +146,6 @@ app.controller('ProfileController',function($scope,$stateParams,twitterfactory){
     var twt = {user : $stateParams.username, twt : $scope.areatwt };
     twitterfactory.postTweet(twt).success(function(data){
       twitterfactory.profiles($stateParams.username).success(function(data){
-        $scope.followingl = data.usr.following.length;
-        $scope.followersl = data.usr.followers.length;
         $scope.profile = data;
       });
     });
