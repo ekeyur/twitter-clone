@@ -69,6 +69,15 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
     });
   };
 
+  service.incrementlikes = function(id){
+    var url = '/likes';
+    return $http({
+      url : url,
+      method : 'POST',
+      data : id
+    });
+  };
+
   service.logIn = function(data){
     var url = '/login';
     return $http({
@@ -129,10 +138,18 @@ app.controller('WorldTimeLineController',function($scope,twitterfactory,$state) 
   twitterfactory.worldtimeline().success(function(tweets){
     $scope.tweets = tweets;
   });
+
   $scope.loginPost = function(){
     user = {username : $scope.usr, password : $scope.password};
     twitterfactory.logIn(user).success(function(data){
       $state.go('profile',{username : $scope.usr});
+    });
+  };
+
+  $scope.likes = function(id){
+    twt_id = {id : id};
+    twitterfactory.incrementlikes(twt_id).success(function(data){
+      
     });
   };
 });

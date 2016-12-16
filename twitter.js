@@ -44,7 +44,8 @@ const user = mongoose.model('user', {
 const tweet = mongoose.model('tweet', {
   text : String,
   timestamp : Date,
-  username : String
+  username : String,
+  likes_counter : Number
 });
 
 
@@ -109,6 +110,23 @@ app.get('/timeline/:username',authCheck,function(req,res){
   }).then(function(tweets){
     res.send(tweets);
   });
+});
+
+app.post('/likes',authCheck,function(req,res){
+  let id = req.body.id;
+  return tweet.update(
+      { _id: id },
+      { $inc: { likes_counter : 1} }
+    )
+.then(function(res){
+  res.send(id);
+})
+.catch(function(error){
+  // if(error){
+  //   console.log(error.stash);
+  // }
+});
+
 });
 
 app.get('/profile/:username',authCheck,function(req,res){
