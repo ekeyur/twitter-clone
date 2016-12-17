@@ -76,8 +76,8 @@ app.post('/login',function(req,res){
           { $set: { token : token , token_added_on : new Date()} }
         )};
       })
-  .then(function(res){
-    res.send(auth_token);
+  .then(function(auth_token){
+    res.send(token);
   })
   .catch(function(err){
     res.send("Error"+err.stash);

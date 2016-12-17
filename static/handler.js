@@ -34,14 +34,15 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
   var service = {};
   $rootScope.loggedIn = false;
   var logindata = $cookies.getObject('user_cookie');
+
   if(logindata){
-  service.auth_token = logindata.auth_token.token;
-  }
+    service.auth_token = logindata.auth_token.token;
+    }
     $rootScope.logOut = function(){
     $rootScope.loggedIn = false;
     service.auth_token = null;
     $cookies.remove('user_cookie');
-};
+  };
 
   service.worldtimeline = function(){
     return $http({
@@ -149,7 +150,7 @@ app.controller('WorldTimeLineController',function($scope,twitterfactory,$state) 
   $scope.likes = function(id){
     twt_id = {id : id};
     twitterfactory.incrementlikes(twt_id).success(function(data){
-      
+
     });
   };
 });

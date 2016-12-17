@@ -9,7 +9,7 @@
        <div class="userdate" style="text-align: right;">
            {{tweet.username}} - {{tweet.timestamp | date : 'MMM, d'}}
            <div class="col-sm-3" style="text-align: left;">
-           <span><i class="fa fa-heart"></i></span>
+           <button class="heart" ng-click="likes(tweet._id)"><i class="fa fa-heart"></i></button><span style= "font-size : .75em;">{{tweet.likes_counter}}</span>
            </div>
        </div>
      </li>
