@@ -32,16 +32,23 @@ app.config(function($stateProvider, $urlRouterProvider){
 
 app.factory('twitterfactory', function($http,$cookies,$rootScope) {
   var service = {};
-  $rootScope.loggedIn = false;
-  var logindata = $cookies.getObject('user_cookie');
 
-  if(logindata){
-    service.auth_token = logindata.auth_token.token;
-    }
-    $rootScope.logOut = function(){
-    $rootScope.loggedIn = false;
-    service.auth_token = null;
-    $cookies.remove('user_cookie');
+  $rootScope.factoryCookieData = null;
+  $rootScope.factoryCookieData = $cookies.getObject('cookieData');
+  console.log("Printing initial cookie", $rootScope.factoryCookieData);
+
+  if ($rootScope.factoryCookieData) {
+    // grab auth_token from the cookieData
+    $rootScope.authToken = $rootScope.factoryCookieData.auth_token;
+    // grab user information from cookieData
+    $rootScope.user_info = $rootScope.factoryCookieData.user;
+  }
+
+  $rootScope.logOut = function(){
+    $cookies.remove('cookieData');
+    $rootScope.factoryCookieData = null;
+    $rootScope.user = null;
+    $rootScope.authToken = null;
   };
 
   service.worldtimeline = function(){
@@ -53,11 +60,13 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
 
   service.postTweet = function(twt){
     var url = '/profile/'+twt.user;
-    console.log(twt);
     return $http({
       url : url,
       method : 'POST',
-      data : twt
+      data : {
+        twt : twt,
+        auth_token : $rootScope.authToken
+          }
     });
   };
 
@@ -75,7 +84,7 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
     return $http({
       url : url,
       method : 'POST',
-      data : id
+      data : { id, auth_token : $rootScope.authToken }
     });
   };
 
@@ -86,9 +95,12 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
       method : 'POST',
       data : data
     }).success(function(data){
-      $rootScope.loggedIn = true;
-      service.auth_token = data.auth_token;
-      $cookies.putObject('logindata',data);
+      console.log(data);
+      $cookies.putObject('cookieData', data);
+      $rootScope.user = data.user;
+      console.log("RootScopeUser: "+$rootScope.user);
+      $rootScope.authToken = data.token;
+      console.log("RootAuthToken: "+$rootScope.authToken);
     });
   };
 
@@ -96,7 +108,8 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
     var url = '/timeline/'+uname;
     return $http({
       url : url,
-      method : 'GET'
+      method : 'GET',
+      params : {auth_token : $rootScope.authToken}
     });
   };
 
@@ -104,15 +117,12 @@ app.factory('twitterfactory', function($http,$cookies,$rootScope) {
     var url = '/profile/'+username;
     return $http({
       url: url,
-      method: 'GET'
+      method: 'GET',
+      params : {auth_token : $rootScope.authToken}
     });
   };
   return service;
 });
-
-// app.controller('LoginController',function($scope,$state,$stateParams,twitterfactory){
-//
-// });
 
 app.controller('SignUpPostController',function($scope,$state,$stateParams,twitterfactory){
   $scope.signuppost = function(){
@@ -156,16 +166,17 @@ app.controller('WorldTimeLineController',function($scope,twitterfactory,$state) 
 });
 
 app.controller('ProfileController',function($scope,$stateParams,twitterfactory){
-  twitterfactory.profiles($stateParams.username).success(function(data){
-    $scope.profile = data;
-  });
+  function profi(){
+    twitterfactory.profiles($stateParams.username).success(function(data){
+      $scope.profile = data;
+    });
+  }
+  profi();
   $scope.posttwt = function()
   {
     var twt = {user : $stateParams.username, twt : $scope.areatwt };
     twitterfactory.postTweet(twt).success(function(data){
-      twitterfactory.profiles($stateParams.username).success(function(data){
-        $scope.profile = data;
-      });
+      profi();
     });
   };
 });

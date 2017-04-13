@@ -13,8 +13,16 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body ng-app="twitterapp">
-    <p><font color="#1da1f2 " font size="5px" text-align="center"><strong> <i class="fa fa-twitter aria-hidden="true""></i>Welcome to Twitter</strong></font></p>
-    <button ng-show="loggedIn" ng-click="logOut()" class="btn btn-danger">LogOut</button>
-    <ui-view></ui-view>
+
+    <div style="text-align: center;">
+      <span><font color="#1da1f2 " style="font-size : 1em;" text-align="center"><strong><i class="fa fa-twitter aria-hidden="true""> </i></strong></font></span>
+    </div>
+      <div style="text-align: right;" >
+        <a ui-sref="worldtimeline">Home</a>
+        <a ng-show="authToken" ui-sref="profile({username : user})">Profile</a>
+        <a ng-show="authToken" ui-sref="mytimeline({username : user})">Mytimeline</a>
+      </div>
+    <main ui-view>
+    </main>
   </body>
 </html>

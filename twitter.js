@@ -77,7 +77,7 @@ app.post('/login',function(req,res){
         )};
       })
   .then(function(auth_token){
-    res.send(token);
+    res.send({user: id, token : token});
   })
   .catch(function(err){
     res.send("Error"+err.stash);
@@ -85,10 +85,10 @@ app.post('/login',function(req,res){
 });
 
 function authCheck(req,res,next){
-  let token = req.query.auth_token;
-  user.find({token : token}).then(function(data){
+  let token = req.body.auth_token;
+  console.log("token: "+token);
+    user.find({token : token}).then(function(data){
     if(data){
-      console.log("Logged in");
       next();
     }
     else{
@@ -144,11 +144,10 @@ app.get('/profile/:username',authCheck,function(req,res){
 
 app.post('/profile/:username',authCheck,function(req,res){
   let twt = new tweet();
-  twt.text = req.body.twt;
   twt.timestamp = new Date();
-  twt.username = req.params.username;
+  twt.text = req.body.twt.twt;
+  twt.username = req.body.twt.user;
   twt.save().then(function(){
-  console.log("Post Successful");
   res.json(twt);
   });
 });
@@ -203,6 +202,6 @@ app.post('/signup',function(req,res){
 // //user timeline
 
 
-app.listen(3000,function(){
+app.listen(3005,function(){
   console.log('Example app listening on port 3000!');
 });
